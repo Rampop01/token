@@ -22,7 +22,7 @@ interface WalletContextType {
 const WalletContext = createContext<WalletContextType | undefined>(undefined);
 
 const CONTRACT_ADDRESS = 'ST33Y8RCP74098JCSPW5QHHCD6QN4H3XS9E4PVW1G';
-const CONTRACT_NAME = 'hello-world';
+const CONTRACT_NAME = 'blonde-peach-tern';
 const NETWORK = STACKS_TESTNET;
 
 const appConfig = new AppConfig(['store_write', 'publish_data']);

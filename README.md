@@ -49,7 +49,7 @@ The contract configuration is located in `app/context/WalletContext.tsx`:
 
 ```typescript
 const CONTRACT_ADDRESS = 'ST33Y8RCP74098JCSPW5QHHCD6QN4H3XS9E4PVW1G';
-const CONTRACT_NAME = 'hello-world';
+const CONTRACT_NAME = 'blonde-peach-tern';
 const NETWORK = STACKS_TESTNET;
 ```
 
@@ -134,7 +134,7 @@ The wallet connection persists across page refreshes.
 
 - **Network**: Stacks Testnet
 - **Contract Address**: `ST33Y8RCP74098JCSPW5QHHCD6QN4H3XS9E4PVW1G`
-- **Contract Name**: `hello-world`
+- **Contract Name**: `blonde-peach-tern`
 - **Explorer**: [Stacks Testnet Explorer](https://explorer.hiro.so/?chain=testnet)
 
 ## 🏗️ Build for Production
