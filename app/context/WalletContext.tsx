@@ -17,6 +17,8 @@ interface WalletContextType {
   callTestEmitEvent: () => Promise<void>;
   loading: boolean;
   error: string | null;
+  success: string | null;
+  clearMessages: () => void;
 }
 
 const WalletContext = createContext<WalletContextType | undefined>(undefined);
@@ -33,6 +35,12 @@ export const WalletProvider: React.FC<{ children: ReactNode }> = ({ children }) 
   const [isConnected, setIsConnected] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+
+  const clearMessages = useCallback(() => {
+    setError(null);
+    setSuccess(null);
+  }, []);
 
   // Check for existing wallet connection on mount
   useEffect(() => {
@@ -98,6 +106,7 @@ export const WalletProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 
     setLoading(true);
     setError(null);
+    setSuccess(null);
 
     try {
       // Convert string to buffer (max 32 bytes)
@@ -110,12 +119,20 @@ export const WalletProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         functionName: 'set-value',
         functionArgs: [keyBuffer, valueBuffer],
         network: NETWORK,
+        onFinish: (data) => {
+          console.log('Transaction submitted:', data.txId);
+          setSuccess(`Transaction submitted! TX ID: ${data.txId}`);
+          setLoading(false);
+        },
+        onCancel: () => {
+          setError('Transaction cancelled by user');
+          setLoading(false);
+        },
       });
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to call set-value';
       setError(errorMessage);
       console.error('Contract call error:', err);
-    } finally {
       setLoading(false);
     }
   }, [isConnected, address]);
@@ -128,6 +145,7 @@ export const WalletProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 
     setLoading(true);
     setError(null);
+    setSuccess(null);
 
     try {
       const keyBuffer = bufferCV(Buffer.from(key.padEnd(32, '\0')));
@@ -138,12 +156,20 @@ export const WalletProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         functionName: 'get-value',
         functionArgs: [keyBuffer],
         network: NETWORK,
+        onFinish: (data) => {
+          console.log('Transaction submitted:', data.txId);
+          setSuccess(`Transaction submitted! TX ID: ${data.txId}`);
+          setLoading(false);
+        },
+        onCancel: () => {
+          setError('Transaction cancelled by user');
+          setLoading(false);
+        },
       });
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to call get-value';
       setError(errorMessage);
       console.error('Contract call error:', err);
-    } finally {
       setLoading(false);
     }
   }, [isConnected, address]);
@@ -156,6 +182,7 @@ export const WalletProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 
     setLoading(true);
     setError(null);
+    setSuccess(null);
 
     try {
       await openContractCall({
@@ -164,12 +191,20 @@ export const WalletProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         functionName: 'test-event-types',
         functionArgs: [],
         network: NETWORK,
+        onFinish: (data) => {
+          console.log('Transaction submitted:', data.txId);
+          setSuccess(`Transaction submitted! TX ID: ${data.txId}`);
+          setLoading(false);
+        },
+        onCancel: () => {
+          setError('Transaction cancelled by user');
+          setLoading(false);
+        },
       });
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to call test-event-types';
       setError(errorMessage);
       console.error('Contract call error:', err);
-    } finally {
       setLoading(false);
     }
   }, [isConnected, address]);
@@ -182,6 +217,7 @@ export const WalletProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 
     setLoading(true);
     setError(null);
+    setSuccess(null);
 
     try {
       await openContractCall({
@@ -190,12 +226,20 @@ export const WalletProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         functionName: 'test-emit-event',
         functionArgs: [],
         network: NETWORK,
+        onFinish: (data) => {
+          console.log('Transaction submitted:', data.txId);
+          setSuccess(`Transaction submitted! TX ID: ${data.txId}`);
+          setLoading(false);
+        },
+        onCancel: () => {
+          setError('Transaction cancelled by user');
+          setLoading(false);
+        },
       });
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to call test-emit-event';
       setError(errorMessage);
       console.error('Contract call error:', err);
-    } finally {
       setLoading(false);
     }
   }, [isConnected, address]);
@@ -213,6 +257,8 @@ export const WalletProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         callTestEmitEvent,
         loading,
         error,
+        success,
+        clearMessages,
       }}
     >
       {children}

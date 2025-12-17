@@ -5,7 +5,7 @@ import { useWallet } from './context/WalletContext';
 import EventMonitor from './components/EventMonitor';
 
 export default function Home() {
-  const { address, isConnected, connectWallet, disconnectWallet, callSetValue, callGetValue, callTestEventTypes, callTestEmitEvent, loading, error } = useWallet();
+  const { address, isConnected, connectWallet, disconnectWallet, callSetValue, callGetValue, callTestEventTypes, callTestEmitEvent, loading, error, success, clearMessages } = useWallet();
   
   const [setKey, setSetKey] = useState('');
   const [setValue, setSetValue] = useState('');
@@ -80,9 +80,37 @@ export default function Home() {
 
         {/* Error Display */}
         {error && (
-          <div className="bg-red-50 dark:bg-red-900 border border-red-200 dark:border-red-700 text-red-800 dark:text-red-100 px-4 py-3 rounded mb-8">
+          <div className="bg-red-50 dark:bg-red-900 border border-red-200 dark:border-red-700 text-red-800 dark:text-red-100 px-4 py-3 rounded mb-8 relative">
+            <button
+              onClick={clearMessages}
+              className="absolute top-2 right-2 text-red-600 dark:text-red-300 hover:text-red-800 dark:hover:text-red-100"
+            >
+              ✕
+            </button>
             <p className="font-medium">Error</p>
             <p className="text-sm">{error}</p>
+          </div>
+        )}
+
+        {/* Success Display */}
+        {success && (
+          <div className="bg-green-50 dark:bg-green-900 border border-green-200 dark:border-green-700 text-green-800 dark:text-green-100 px-4 py-3 rounded mb-8 relative">
+            <button
+              onClick={clearMessages}
+              className="absolute top-2 right-2 text-green-600 dark:text-green-300 hover:text-green-800 dark:hover:text-green-100"
+            >
+              ✕
+            </button>
+            <p className="font-medium">Success! ✓</p>
+            <p className="text-sm break-all">{success}</p>
+            <a
+              href={`https://explorer.hiro.so/txid/${success.split('TX ID: ')[1]}?chain=testnet`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-green-700 dark:text-green-200 hover:underline mt-1 inline-block"
+            >
+              View in Explorer →
+            </a>
           </div>
         )}
 
