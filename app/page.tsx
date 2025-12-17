@@ -62,12 +62,18 @@ export default function Home() {
               </button>
             </div>
           ) : (
-            <button
-              onClick={connectWallet}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded transition-colors"
-            >
-              Connect Wallet
-            </button>
+            <div className="space-y-3">
+              <button
+                onClick={connectWallet}
+                disabled={loading}
+                className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium py-3 px-4 rounded transition-colors"
+              >
+                {loading ? 'Connecting...' : 'Connect Wallet'}
+              </button>
+              <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
+                Make sure you have Leather or Xverse wallet installed
+              </p>
+            </div>
           )}
         </div>
 

@@ -1,9 +1,10 @@
 'use client';
 
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
-import { openSTXTransfer, openContractCall, showConnect } from '@stacks/connect';
+import React, { createContext, useContext, useState, useCallback, ReactNode, useEffect } from 'react';
+import { AppConfig, showConnect, UserSession } from '@stacks/connect';
 import { STACKS_TESTNET } from '@stacks/network';
 import { principalCV, uintCV, bufferCV } from '@stacks/transactions';
+import { openContractCall } from '@stacks/connect';
 
 interface WalletContextType {
   address: string | null;
@@ -24,11 +25,31 @@ const CONTRACT_ADDRESS = 'ST33Y8RCP74098JCSPW5QHHCD6QN4H3XS9E4PVW1G';
 const CONTRACT_NAME = 'hello-world';
 const NETWORK = STACKS_TESTNET;
 
+const appConfig = new AppConfig(['store_write', 'publish_data']);
+const userSession = new UserSession({ appConfig });
+
 export const WalletProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [address, setAddress] = useState<string | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Check for existing wallet connection on mount
+  useEffect(() => {
+    const checkConnection = () => {
+      if (userSession.isUserSignedIn()) {
+        const userData = userSession.loadUserData();
+        const userAddress = userData.profile.stxAddress.testnet;
+        console.log('User already signed in:', userAddress);
+        if (userAddress) {
+          setAddress(userAddress);
+          setIsConnected(true);
+        }
+      }
+    };
+
+    checkConnection();
+  }, []);
 
   const connectWallet = useCallback(() => {
     showConnect({
@@ -37,24 +58,27 @@ export const WalletProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         icon: window.location.origin + '/next.svg',
       },
       redirectTo: '/',
+      userSession,
       onFinish: () => {
-        // Get the user's address from localStorage (set by Stacks Connect)
-        const userData = localStorage.getItem('blockstack');
-        if (userData) {
-          try {
-            const userObj = JSON.parse(userData);
-            const userAddress = userObj?.profile?.stxAddress?.testnet;
-            if (userAddress) {
-              setAddress(userAddress);
-              setIsConnected(true);
-              setError(null);
-            }
-          } catch (err) {
-            console.error('Error parsing user data:', err);
+        console.log('Connection finished!');
+        
+        // Get user data after connection
+        if (userSession.isUserSignedIn()) {
+          const userData = userSession.loadUserData();
+          const userAddress = userData.profile.stxAddress.testnet;
+          console.log('User address:', userAddress);
+          
+          if (userAddress) {
+            setAddress(userAddress);
+            setIsConnected(true);
+            setError(null);
+          } else {
+            setError('Failed to retrieve wallet address');
           }
         }
       },
       onCancel: () => {
+        console.log('Connection cancelled');
         setError('Wallet connection cancelled');
       },
     });
@@ -63,7 +87,7 @@ export const WalletProvider: React.FC<{ children: ReactNode }> = ({ children }) 
   const disconnectWallet = useCallback(() => {
     setAddress(null);
     setIsConnected(false);
-    localStorage.removeItem('blockstack');
+    userSession.signUserOut();
   }, []);
 
   const callSetValue = useCallback(async (key: string, value: string) => {
