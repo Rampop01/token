@@ -96,20 +96,57 @@ Emit a simple event that prints "Event! Hello world"
 - **Wallet SDK**: @stacks/connect
 - **Network**: @stacks/network
 - **Transactions**: @stacks/transactions
+- **Event Monitoring**: @hirosystems/chainhooks-client
+- **HTTP Client**: undici
+
+## 📡 Hiro Chainhooks Integration
+
+This project integrates **Hiro Chainhooks** for real-time blockchain event monitoring:
+
+### Features:
+- **Live Event Feed**: Real-time display of contract events (FT mints, NFT transfers, contract calls, etc.)
+- **Automatic Polling**: Fetches latest transactions every 15 seconds when monitoring is active
+- **Event History**: Shows last 50 contract events with detailed information
+- **Hiro API Integration**: Connects to Hiro's testnet API for reliable data
+- **Webhook Support**: API endpoint ready to receive chainhook notifications
+
+### Event Monitor:
+The EventMonitor component displays:
+- 🪙 Fungible token events (mint/transfer)
+- 🎨 NFT events (mint/transfer)
+- 💰 STX transfer operations
+- 📞 Contract function calls
+- Transaction details with explorer links
+
+### Chainhook Manager (Advanced):
+Optional component (`app/components/ChainhookManager.tsx`) for managing chainhooks:
+- Register new chainhooks for specific events
+- Monitor FT, NFT, and print events
+- Enable/disable/delete registered chainhooks
+- Check Hiro API status
 
 ## 📁 Project Structure
 
 ```
 stacks-frontend/
 ├── app/
+│   ├── api/
+│   │   └── chainhooks/
+│   │       └── webhook/
+│   │           └── route.ts        # Webhook endpoint for chainhook events
+│   ├── components/
+│   │   ├── EventMonitor.tsx        # Real-time event monitor UI
+│   │   └── ChainhookManager.tsx    # Chainhook management interface
 │   ├── context/
-│   │   └── WalletContext.tsx    # Wallet provider & contract functions
-│   ├── globals.css              # Global styles
-│   ├── layout.tsx               # Root layout with providers
-│   └── page.tsx                 # Main UI page
-├── public/                      # Static assets
-├── package.json                 # Dependencies
-└── README.md                    # This file
+│   │   └── WalletContext.tsx       # Wallet provider & contract functions
+│   ├── globals.css                 # Global styles
+│   ├── layout.tsx                  # Root layout with providers
+│   └── page.tsx                    # Main UI page
+├── lib/
+│   └── chainhooks.ts               # Chainhook utilities & Hiro API client
+├── public/                         # Static assets
+├── package.json                    # Dependencies
+└── README.md                       # This file
 ```
 
 ## 🔐 Wallet Connection

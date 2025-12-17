@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useWallet } from './context/WalletContext';
+import EventMonitor from './components/EventMonitor';
 
 export default function Home() {
   const { address, isConnected, connectWallet, disconnectWallet, callSetValue, callGetValue, callTestEventTypes, callTestEmitEvent, loading, error } = useWallet();
@@ -200,6 +201,9 @@ export default function Home() {
                 </p>
               </div>
             </div>
+
+            {/* Event Monitor - Hiro Chainhooks */}
+            <EventMonitor />
           </div>
         ) : (
           // <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 text-center">
