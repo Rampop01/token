@@ -37,26 +37,21 @@ export function useStacksWebSocket({
     const connect = async () => {
       // Prevent multiple simultaneous connections
       if (isConnectingRef.current || clientRef.current) {
-        console.log('Connection already in progress or established');
         return;
       }
 
       isConnectingRef.current = true;
 
       try {
-        console.log('Connecting to Stacks WebSocket...');
-        
         // Connect to Stacks testnet WebSocket
         const client = await connectWebSocketClient('wss://api.testnet.hiro.so/');
         
         if (!mounted) {
-          console.log('Component unmounted, aborting connection');
           return;
         }
 
         clientRef.current = client;
         
-        console.log('WebSocket connected, subscribing to address transactions...');
         setIsConnected(true);
         setError(null);
 
@@ -64,8 +59,6 @@ export function useStacksWebSocket({
         const contractId = `${contractAddress}.${contractName}`;
         const subscription = await client.subscribeAddressTransactions(contractId, (addressTx: any) => {
           if (!mounted) return;
-          
-          console.log('Transaction event received:', addressTx);
           
           const tx = addressTx.tx || addressTx;
           const stacksEvent: StacksEvent = {
@@ -83,7 +76,6 @@ export function useStacksWebSocket({
         }
 
         subscriptionRef.current = subscription;
-        console.log('Successfully subscribed to contract transactions');
         
       } catch (err) {
         console.error('Failed to connect WebSocket:', err);
@@ -101,7 +93,6 @@ export function useStacksWebSocket({
     // Cleanup function
     return () => {
       mounted = false;
-      console.log('Cleaning up WebSocket connection...');
       
       const cleanup = async () => {
         try {

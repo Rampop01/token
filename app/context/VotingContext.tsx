@@ -55,7 +55,6 @@ export const VotingProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         ],
         network: NETWORK,
         onFinish: (data) => {
-          console.log('Poll created:', data.txId);
           setSuccess(`Poll created successfully! TX ID: ${data.txId}`);
           setLoading(false);
         },
@@ -93,7 +92,6 @@ export const VotingProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         ],
         network: NETWORK,
         onFinish: (data) => {
-          console.log('Vote cast:', data.txId);
           setSuccess(`Vote cast successfully! TX ID: ${data.txId}`);
           setLoading(false);
         },
@@ -128,7 +126,6 @@ export const VotingProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         functionArgs: [uintCV(pollId)],
         network: NETWORK,
         onFinish: (data) => {
-          console.log('Poll ended:', data.txId);
           setSuccess(`Poll ended successfully! TX ID: ${data.txId}`);
           setLoading(false);
         },

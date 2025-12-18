@@ -31,9 +31,8 @@ export default function VotingDApp() {
 
   // WebSocket event handler
   const handleWebSocketEvent = useCallback((event: any) => {
-    console.log('WebSocket event received, refreshing polls...', event);
     fetchPolls();
-    fetchUserVotes(); // Also refresh vote status
+    fetchUserVotes();
   }, []);
 
   // Connect to WebSocket
@@ -132,7 +131,6 @@ export default function VotingDApp() {
     if (!isConnected || !address) return;
     
     try {
-      console.log('Fetching user vote history...');
       const response = await fetch('/api/voting/user-votes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -140,7 +138,6 @@ export default function VotingDApp() {
       });
       
       const data = await response.json();
-      console.log('User votes:', data);
       
       if (data.votedPolls) {
         setVotedPolls(new Set(data.votedPolls));
@@ -155,17 +152,13 @@ export default function VotingDApp() {
     
     setLoadingPolls(true);
     try {
-      console.log('Fetching all polls...');
-      // Single API call to get all polls
       const response = await fetch('/api/voting/all-polls', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ sender: address }),
       });
       
-      console.log('Response status:', response.status);
       const data = await response.json();
-      console.log('All polls response:', JSON.stringify(data, null, 2));
       
       if (data.error) {
         console.error('Error fetching polls:', data.error);
@@ -178,18 +171,14 @@ export default function VotingDApp() {
       setPollCount(data.count || 0);
       
       if (!data.polls || data.polls.length === 0) {
-        console.log('No polls found');
         setPolls([]);
         setLoadingPolls(false);
         return;
       }
 
-      console.log('Processing', data.polls.length, 'polls');
       const pollData: Poll[] = data.polls
         .map((pollResponse: any, index: number) => {
-          console.log(`Processing poll ${index}:`, pollResponse);
           if (!pollResponse.okay || !pollResponse.result) {
-            console.log(`Skipping poll ${index}`);
             return null;
           }
           
@@ -212,14 +201,12 @@ export default function VotingDApp() {
         .filter((poll: Poll | null): poll is Poll => poll !== null)
         .reverse();
       
-      console.log('Parsed polls:', pollData);
       setPolls(pollData);
     } catch (error) {
       console.error('Error fetching polls:', error);
       setPollCount(0);
       setPolls([]);
     } finally {
-      console.log('Setting loadingPolls to false');
       setLoadingPolls(false);
     }
   }, [isConnected, address]);

@@ -8,8 +8,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Address required' }, { status: 400 });
     }
 
-    console.log('Fetching vote events for address:', address);
-
     // Fetch transactions for the user's address
     const response = await fetch(
       `https://api.testnet.hiro.so/extended/v1/address/${address}/transactions?limit=50`,
@@ -28,7 +26,6 @@ export async function POST(request: Request) {
     }
 
     const data = await response.json();
-    console.log('Transactions response:', data);
 
     // Filter for vote transactions on our contract
     const votedPolls = new Set<number>();
@@ -56,8 +53,6 @@ export async function POST(request: Request) {
         }
       }
     }
-
-    console.log('User voted on polls:', Array.from(votedPolls));
 
     return NextResponse.json({
       votedPolls: Array.from(votedPolls)
